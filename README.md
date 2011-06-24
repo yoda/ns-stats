@@ -37,4 +37,6 @@ Then run the code in your browser locally and copy paste the json dump from the 
 
 Make a lean proxy for the data inorder to do ajax calls and have a pretty interface to go through recent data. Extend the number of statistics generated, some ideas currently: lifespan per unit, kills per unit, deaths per unit, per map, across all maps etc, progression of game through time. Maybe a plugin to add more granularity of logs to allow player stats.
 
+## Legal (TODO)
+I use the artifacts that are created by Unknown Worlds Entertainment currently without permission however I am not using them for financial gain and nor do I condone them to be used by anyone else for financial gain.
 
