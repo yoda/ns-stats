@@ -1,0 +1,175 @@
+<html>
+  <head>
+    <title>Stats</title>
+
+    <style type="text/css"> 
+      .graph { background-color: #F9F9F9; 
+        border: 1px solid #CCCCCC; padding: 3px; 
+        font: 11px/1.4em Helvetica, sans-serif; } 
+      .graph svg { border: 1px solid #CCCCCC; 
+        vertical-align:middle; margin-bottom: 3px; } 
+      .right { margin: 0.5em 0pt 0.5em 0.8em; float:right; } 
+      .left { margin: 0.5em 0.8em 0.5em 0; float:left; } 
+	   .chart rect {
+	   stroke: white;
+	fill: steelblue;
+		 }
+    </style>
+  </head>
+  <body>
+    <script src="d3.min.js"></script>
+    <script src="jquery-1.5.1.js"></script>
+    <div id="graphs"></div>
+    <textarea id="data"></textarea>
+    <button id="load_data">Load Data</button>
+    <script>
+		// Defaults / Globals / Defs
+
+		MARINE_TEAM = 1;
+		ALIEN_TEAM = 2;
+		BOTH_TEAM = 3;
+
+		function findKeyValuePairByKey(kvps, key_name, key_value) {
+			var target_index = -1;
+			$.each(kvps, function(index, val) {
+				if (val[key_name] == key_value)
+				{
+					target_index = index;
+					return false;
+				}
+			});
+			return target_index;
+		}
+
+		// Make a list of unique object names
+		function collectObjectNamesByTeam(team, data, field_prefix, field_suffix) {
+			var unique_object_names = [];
+			var field_name = "" + field_prefix + field_suffix;
+			$.each(data, function(index, val) {
+				if (val[field_prefix + "_team"] == team)
+				{
+				
+					var existing_index = findKeyValuePairByKey(unique_object_names, "name", val[field_name]);
+					if (existing_index >= 0)
+					{
+						unique_object_names[existing_index]["value"] = unique_object_names[existing_index]["value"] + 1;
+					} else {
+						unique_object_names.push({"value": 1, "name": val[field_name]});
+					}
+				}
+			});
+			return unique_object_names;
+		}
+
+		function compare_kv(a, b) {
+			if (a["value"] > b["value"]) 
+				return -1;
+			if (a["value"] < b["value"])
+				return 1;
+			// a must be equal to b
+			return 0;
+		}
+
+
+      window.onload = function() {
+
+		 $('#load_data').bind('click', function() {
+          var data_text = $('#data').val();
+          var data_json = JSON.parse(data_text);
+
+		  var queries = [[ALIEN_TEAM, "target", "_type", "Alien lifeforms killed"], [MARINE_TEAM, "target", "_type", "Marine lifeforms and structures killed"], [MARINE_TEAM, "attacker", "_type", "Kills by marine type"], [ALIEN_TEAM, "attacker", "_type", "Kills by alien type"], [MARINE_TEAM, "attacker", "_weapon", "Kills by marine weapon type"], [ALIEN_TEAM, "attacker", "_weapon", "Kills by alien weapon type"]];
+
+          if (data_json != null) {
+			for (var query_index = 0; query_index < queries.length; query_index = query_index + 1 ) {
+
+
+			var results = collectObjectNamesByTeam(queries[query_index][0], data_json, queries[query_index][1], queries[query_index][2]);
+			alert(results.length);
+			
+			results.sort(compare_kv);
+
+		
+		
+		 var data = results;
+
+		 var bar_width = 20;
+		 var max_y = (bar_width * (data.length));
+		 var data_length = data.length;
+
+		 var chart = d3.select("#graphs")
+			.append("svg:svg")
+			.attr("class", "chart")
+			.attr("width", 600)
+			.attr("height", max_y)
+			.append("svg:g")
+			.attr("transform", "translate(100,20)");
+
+		var x = d3.scale.linear()
+			.domain([0, d3.max(data, function(d) {return d["value"];})])
+			.range([0, 420]);
+
+		var y = d3.scale.ordinal()
+			.domain(data)
+			.rangeBands([0, max_y]);
+		
+		chart.selectAll("rect")
+			.data(data)
+			.enter().append("svg:rect")
+			.attr("y",  function(d) { return y(d["value"]) })
+			.attr("width", function(d) {return x(d["value"]);})
+			.attr("height", y.rangeBand());
+
+		chart.selectAll("rect")
+			.data(data)
+			.enter().append("svg:text")
+			.attr("x",x)
+			.attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
+			.attr("dx", -3) // padding-right
+			.attr("dy", ".35em") // vertical-align: middle
+			.attr("text-anchor", "end") // text-align: right
+			.text(String);
+
+		chart.selectAll("rect")
+			.data(data, function(d) { return d["name"]; })
+			.enter().append("svg:text")
+			.attr("x",0)
+			.attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
+			.attr("dx", -3) // padding-right
+			.attr("dy", ".35em") // vertical-align: middle
+			.attr("text-anchor", "end") // text-align: right
+			.text(function(d, i) {return data[(i - data_length)]["name"];});		//.text(function(d,i) { return data[(i - (data.length / 2))]["name"]});
+
+		
+
+		chart.selectAll("line")
+			.data(x.ticks(10))
+			.enter().append("svg:line")
+			.attr("x1", x)
+			.attr("x2", x)
+			.attr("y1", 0)
+			.attr("y2", max_y)
+			.attr("stroke", "#ccc");
+
+		chart.selectAll("text.rule")
+			.data(x.ticks(10))
+			.enter().append("svg:text")
+			.attr("class", "rule")
+			.attr("x", x)
+			.attr("y", 0)
+			.attr("dy", -3)
+			.attr("text-anchor", "middle")
+			.text(String);
+
+		chart.append("svg:line")
+			.attr("y1", 0)
+			.attr("y2", max_y)
+			.attr("stroke", "#000");
+	//	});
+	}
+		};
+		});
+      };
+
+    </script>
+  </body>
+</html>
