@@ -117,9 +117,19 @@
 
 
               var results = collectObjectNamesByTeam(queries[query_index][0], data_json, queries[query_index][1], queries[query_index][2]);
-              alert(results.length);
 
               results.sort(compare_kv);
+              var temp = "";
+
+              temp += "[";
+              $.each(results, function(i_x, da) {
+                temp += "[" + da["name"] + ", " + da["value"] + "], " 
+              });
+              temp += "]";
+
+              alert(temp);
+
+
 
 
 
@@ -137,13 +147,13 @@
                 .append("svg:svg")
                 .attr("class", "chart")
                 .attr("width", chart_width)
-                .attr("height", max_y + title_height)
+                .attr("height", max_y + title_height + y_offset)
                 .append("svg:g")
                 .attr("transform", "translate(" + x_offset + ", " + y_offset + ")");
 
               var x = d3.scale.linear()
-                .domain([0, d3.max(data, function(d) {return d["value"];})])
-                .range([0, 420]);
+              .domain([d3.min(data, function(d) { return d["value"]; }), d3.max(data, function(d) {return d["value"];})])
+              .range([0, (chart_width - x_offset - bar_width)]);
 
               var y = d3.scale.ordinal()
                 .domain(data)
