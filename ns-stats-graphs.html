@@ -162,7 +162,7 @@
               chart.selectAll("rect")
                 .data(data)
                 .enter().append("svg:rect")
-                .attr("y",  function(d) { return y(d["value"]) })
+                .attr("y",  function(d) { return y(d["name"]) })
                 .attr("width", function(d) {return x(d["value"]);})
                 .attr("fill", team_color(queries[query_index][0]))
                 .attr("height", y.rangeBand());
