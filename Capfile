@@ -23,6 +23,7 @@ set :admin_runner, user
 
 namespace :deploy do
   task :start, :roles => [:web, :app] do
+    run "bundle install"
     run "cd #{deploy_to}/current && nohup thin -C thin/production_config.yml -R config.ru start"
   end
 
