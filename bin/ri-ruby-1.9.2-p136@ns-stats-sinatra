@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [[ -s "/Users/yoda/.rvm/environments/ruby-1.9.2-p136@ns-stats-sinatra" ]]
+then
+  source "/Users/yoda/.rvm/environments/ruby-1.9.2-p136@ns-stats-sinatra"
+  exec ri "$@"
+else
+  echo "ERROR: Missing RVM environment file: '/Users/yoda/.rvm/environments/ruby-1.9.2-p136@ns-stats-sinatra'" >&2
+  exit 1
+fi
+  
