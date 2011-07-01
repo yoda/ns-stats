@@ -4,7 +4,7 @@ address: 127.0.0.1
 user: ns_stats
 group: ns_stats
 port: 8000
-pid: /home/ns_stats/www/ns_stats/current/tmp/thin.pid
+pid: /home/ns_stats/www/ns_stats/current/tmp/pids
 rackup: /home/ns_stats/www/ns_stats/current/config.ru
 log: /home/ns_stats/www/ns_stats/current/thin_log/thin.log
 max_conns: 1024
