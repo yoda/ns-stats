@@ -6,7 +6,7 @@ group: ns_stats
 port: 8000
 pid: /home/ns_stats/www/ns_stats/current/tmp/pids
 rackup: /home/ns_stats/www/ns_stats/current/config.ru
-log: /home/ns_stats/www/ns_stats/current/thin_log/thin.log
+log: /home/ns_stats/www/ns_stats/current/log/thin.log
 max_conns: 1024
 timeout: 30
 max_persistent_conns: 512

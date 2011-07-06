@@ -49,6 +49,6 @@ end
 
 namespace :ns_stats do
   task :log do
-    run "cat #{deploy_to}/current/thin_log/thin.log"
+    run "cat #{deploy_to}/current/log/thin.log"
   end
 end
