@@ -4,7 +4,7 @@ require 'rest-client'
 require 'json'
 
   QUERY_URL = "http://unknownworldsstats.appspot.com/statkilldata"
-  VALID_BUILD_NUMBERS = (175..200).map{|n| n.to_s}
+  VALID_BUILD_NUMBERS = (175..250).map{|n| n.to_s}
   VALID_MAP_NAMES = ['ns2_summit', 'ns2_rockdown', 'ns2_junction', 'ns2_tram' ]
 
   get '/' do
