@@ -7,9 +7,9 @@ require 'json'
   VALID_BUILD_NUMBERS = (175..250).map{|n| n.to_s}
   VALID_MAP_NAMES = ['ns2_summit', 'ns2_rockdown', 'ns2_junction', 'ns2_tram' ]
 
-  get '/' do
-    haml :index
-  end
+#  get '/' do
+#    haml :index
+#  end
 
   get '/:build_number/:map_name' do |build_number, map_name|
     content_type :json

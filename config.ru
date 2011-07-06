@@ -2,7 +2,7 @@ require 'rubygems'
 require 'sinatra'
 
 set :environment, :production
-set :port, 8000
+set :port, 3000
 disable :run, :reload
 
 puts Dir.pwd
