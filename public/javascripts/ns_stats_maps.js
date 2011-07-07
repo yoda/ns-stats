@@ -1,14 +1,3 @@
-
-// Defaults / Globals / Defs
-
-MARINE_TEAM = 1;
-ALIEN_TEAM = 2;
-BOTH_TEAM = 3;
-VALID_BUILD_NUMBERS = [178, 179, 180, 181, 182];
-VALID_MAP_NAMES = ['ns2_summit', 'ns2_rockdown', 'ns2_junction', 'ns2_tram' ];
-
-
-image_root = "images/";
 // prefix must be the prefix of the variable type eg. "attacker" is the prefix of "attackerx" or "attacker_team"
 function draw_heatmap(data, bg, prefix, team_select) {
   var aliens = (team_select == ALIEN_TEAM);

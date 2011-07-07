@@ -1,26 +1,4 @@
 
-// Defaults / Globals / Defs
-
-MARINE_TEAM = 1;
-MARINE_COLOR = "#025D8C";
-ALIEN_TEAM = 2;
-ALIEN_COLOR = "#028C5D";
-BOTH_TEAM = 3;
-DEFAULT_COLOR = "#CCCCCC";
-function team_color(team) {
-  switch(team) {
-    case MARINE_TEAM: {
-      return MARINE_COLOR;
-    }
-    case (ALIEN_TEAM): {
-      return ALIEN_COLOR;
-    }
-    default: {
-      return DEFAULT_COLOR;
-    }
-  }
-};
-
 function findKeyValuePairByKey(kvps, key_name, key_value) {
   var target_index = -1;
   $.each(kvps, function(index, val) {
