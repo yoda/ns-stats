@@ -1,4 +1,46 @@
-// Defaults / Globals / Defs
+$(function() {
+   NSStats.App.boot();
+});
+
+var NSStats = (function (NSStats) {
+   NSStats.Events = new function() {
+       this.configEventRouter = function() {
+           $(document).bind('nss.events.load_data', function(e) {
+              // Hookup the onchange events and on click to go get data
+           });
+       };
+   };
+   return NSStats
+}(NSStats || {}));
+
+var NSStats = (function (NSStats) {
+    NSStats.App = new function() {
+        this.boot = function() {
+            NSStats.Events.configEventRouter();
+
+            NSStats.App.configLoadData();
+        };
+    };
+
+    this.configLoadData = function() {
+        var load_data_button = $('#select_list').find('#load_data');
+        $(load_data_button).bind('click', function() {
+            var map_name_selector = $('#select_list').find('#map_name');
+            var build_number_selector = $('#select_list').find('#build_number');
+            var url = '/' + build_number_selector.val() + '/' + map_name_selector.val() + '/';
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                data: '',
+                success: ''
+            })
+
+        });
+    };
+    return NSStats
+}(NSStats || {}));
+
+// Defaults / Global / Defs
 //
 MARINE_TEAM = 1;
 MARINE_COLOR = "#025D8C";
