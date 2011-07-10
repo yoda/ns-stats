@@ -20,22 +20,24 @@ var NSStats = (function (NSStats) {
 
             NSStats.App.configLoadData();
         };
-    };
 
-    this.configLoadData = function() {
-        var load_data_button = $('#select_list').find('#load_data');
-        $(load_data_button).bind('click', function() {
-            var map_name_selector = $('#select_list').find('#map_name');
-            var build_number_selector = $('#select_list').find('#build_number');
-            var url = '/' + build_number_selector.val() + '/' + map_name_selector.val() + '/';
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                data: '',
-                success: ''
-            })
+        this.configLoadData = function() {
+            var load_data_button = $('#select_list').find('#load_data');
+            $(load_data_button).bind('click', function() {
+                var map_name_selector = $('#select_list').find('#map_name');
+                var build_number_selector = $('#select_list').find('#build_number');
+                var url = '/' + build_number_selector.val() + '/' + map_name_selector.val() + '/';
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    data: '',
+                    success: (function(data, textStatus, jqXHR) {
+                        alert(data);
+                    })
+                })
 
-        });
+            });
+        };
     };
     return NSStats
 }(NSStats || {}));
