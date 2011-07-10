@@ -26,7 +26,7 @@ var NSStats = (function (NSStats) {
             $(load_data_button).bind('click', function() {
                 var map_name_selector = $('#select_list').find('#map_name');
                 var build_number_selector = $('#select_list').find('#build_number');
-                var url = '/' + build_number_selector.val() + '/' + map_name_selector.val() + '/';
+                var url = '/' + build_number_selector.val() + '/' + map_name_selector.val();
                 $.ajax({
                     url: url,
                     dataType: 'json',
