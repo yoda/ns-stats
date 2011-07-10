@@ -41,125 +41,111 @@ function compare_kv(a, b) {
 }
 
 
-window.onload = function() {
-  $('#load_data').bind('click', function() {
-    var data_text = $('#data').val();
-    var data_json = JSON.parse(data_text);
+function plot_graph(data_json, query) {
+    var results = collectObjectNamesByTeam(query[0], data_json, query[1], query[2]);
 
-    var queries = [[ALIEN_TEAM, "target", "_type", "Number of Kharaa Deaths"], [MARINE_TEAM, "target", "_type", "Number of TSA Deaths"], [MARINE_TEAM, "attacker", "_type", "Kills by TSA Type"], [ALIEN_TEAM, "attacker", "_type", "Kills by Kharaa Type"], [MARINE_TEAM, "attacker", "_weapon", "TSA Kills by Weapon Type"], [ALIEN_TEAM, "attacker", "_weapon", "Kharaa Kills by Weapon Type"]];
+    results.sort(compare_kv);
+    var temp = "";
 
-    if (data_json != null) {
-      for (var query_index = 0; query_index < queries.length; query_index = query_index + 1 ) {
+    temp += "[";
+    $.each(results, function(i_x, da) {
+      temp += "[" + da["name"] + ", " + da["value"] + "], "
+    });
+    temp += "]";
 
-
-        var results = collectObjectNamesByTeam(queries[query_index][0], data_json, queries[query_index][1], queries[query_index][2]);
-
-        results.sort(compare_kv);
-        var temp = "";
-
-        temp += "[";
-        $.each(results, function(i_x, da) {
-          temp += "[" + da["name"] + ", " + da["value"] + "], " 
-        });
-        temp += "]";
-
-        alert(temp);
+    alert(temp);
 
 
 
 
 
-        var data = results;
+    var data = results;
 
-        var title_height = 30;
-        var chart_width = 600;
-        var x_offset = 100;
-        var bar_width = 20;
-        var y_offset = title_height + bar_width;
-        var max_y = (bar_width * (data.length));
-        var data_length = data.length;
+    var title_height = 30;
+    var chart_width = 600;
+    var x_offset = 100;
+    var bar_width = 20;
+    var y_offset = title_height + bar_width;
+    var max_y = (bar_width * (data.length));
+    var data_length = data.length;
 
-        var chart = d3.select("#graphs")
-          .append("svg:svg")
-          .attr("class", "chart")
-          .attr("width", chart_width)
-          .attr("height", max_y + title_height + y_offset)
-          .append("svg:g")
-          .attr("transform", "translate(" + x_offset + ", " + y_offset + ")");
+    var chart = d3.select("#graphs")
+      .append("svg:svg")
+      .attr("class", "chart")
+      .attr("width", chart_width)
+      .attr("height", max_y + title_height + y_offset)
+      .append("svg:g")
+      .attr("transform", "translate(" + x_offset + ", " + y_offset + ")");
 
-        var x = d3.scale.linear()
-          .domain([d3.min(data, function(d) { return d["value"]; }), d3.max(data, function(d) {return d["value"];})])
-          .range([0, (chart_width - x_offset - bar_width)]);
+    var x = d3.scale.linear()
+      .domain([d3.min(data, function(d) { return d["value"]; }), d3.max(data, function(d) {return d["value"];})])
+      .range([0, (chart_width - x_offset - bar_width)]);
 
-        var y = d3.scale.ordinal()
-          .domain(data)
-          .rangeRoundBands([0, max_y]);
+    var y = d3.scale.ordinal()
+      .domain(data)
+      .rangeRoundBands([0, max_y]);
 
-        chart.selectAll("rect")
-          .data(data)
-          .enter().append("svg:rect")
-          .attr("y",  function(d) { return y(d["name"]) })
-          .attr("width", function(d) {return x(d["value"]);})
-          .attr("fill", team_color(queries[query_index][0]))
-          .attr("height", y.rangeBand());
+    chart.selectAll("rect")
+      .data(data)
+      .enter().append("svg:rect")
+      .attr("y",  function(d) { return y(d["name"]) })
+      .attr("width", function(d) {return x(d["value"]);})
+      .attr("fill", team_color(query[0]))
+      .attr("height", y.rangeBand());
 
-        chart.selectAll("rect")
-          .data(data)
-          .enter().append("svg:text")
-          .attr("x",x)
-          .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
-          .attr("dx", -3) // padding-right
-          .attr("dy", ".35em") // vertical-align: middle
-          .attr("class", "totals")
-          .attr("text-anchor", "end") // text-align: right
-          .text(String);
+    chart.selectAll("rect")
+      .data(data)
+      .enter().append("svg:text")
+      .attr("x",x)
+      .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
+      .attr("dx", -3) // padding-right
+      .attr("dy", ".35em") // vertical-align: middle
+      .attr("class", "totals")
+      .attr("text-anchor", "end") // text-align: right
+      .text(String);
 
-        chart.selectAll("rect")
-          .data(data)
-          .enter().append("svg:text")
-          .attr("x",0)
-          .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
-          .attr("dx", -3) // padding-right
-          .attr("dy", ".35em") // vertical-align: middle
-          .attr("text-anchor", "end") // text-align: right
-          .text(function(d, i) {return data[(i - data_length)]["name"];});		//.text(function(d,i) { return data[(i - (data.length / 2))]["name"]});
-
-
-
-        chart.selectAll("line")
-          .data(x.ticks(10))
-          .enter().append("svg:line")
-          .attr("x1", x)
-          .attr("x2", x)
-          .attr("y1", 0)
-          .attr("y2", max_y)
-          .attr("stroke", "#ccc");
-
-        chart.selectAll("text.rule")
-          .data(x.ticks(10))
-          .enter().append("svg:text")
-          .attr("class", "rule")
-          .attr("x", x)
-          .attr("y", 0)
-          .attr("dy", -3)
-          .attr("text-anchor", "middle")
-          .text(String);
+    chart.selectAll("rect")
+      .data(data)
+      .enter().append("svg:text")
+      .attr("x",0)
+      .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
+      .attr("dx", -3) // padding-right
+      .attr("dy", ".35em") // vertical-align: middle
+      .attr("text-anchor", "end") // text-align: right
+      .text(function(d, i) {return data[(i - data_length)]["name"];});		//.text(function(d,i) { return data[(i - (data.length / 2))]["name"]});
 
 
-        chart.append("svg:line")
-          .attr("y1", 0)
-          .attr("y2", max_y)
-          .attr("stroke", "#000");
 
-        chart.append("svg:text")
-          .attr("x", (chart_width / 2) - x_offset)
-          .attr("y", -(title_height))
-          .attr("class", "title")
-          .attr("text-anchor", "middle")
-          .text(queries[query_index][3]);
+    chart.selectAll("line")
+      .data(x.ticks(10))
+      .enter().append("svg:line")
+      .attr("x1", x)
+      .attr("x2", x)
+      .attr("y1", 0)
+      .attr("y2", max_y)
+      .attr("stroke", "#ccc");
 
-        //	});
-    }
-  };
-});
-};
+    chart.selectAll("text.rule")
+      .data(x.ticks(10))
+      .enter().append("svg:text")
+      .attr("class", "rule")
+      .attr("x", x)
+      .attr("y", 0)
+      .attr("dy", -3)
+      .attr("text-anchor", "middle")
+      .text(String);
+
+
+    chart.append("svg:line")
+      .attr("y1", 0)
+      .attr("y2", max_y)
+      .attr("stroke", "#000");
+
+    chart.append("svg:text")
+      .attr("x", (chart_width / 2) - x_offset)
+      .attr("y", -(title_height))
+      .attr("class", "title")
+      .attr("text-anchor", "middle")
+      .text(query[3]);
+
+}

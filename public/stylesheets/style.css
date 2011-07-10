@@ -1,0 +1,90 @@
+body {
+    padding:  0;
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: verdana, sans-serif;
+    font-size: 10pt;
+}
+
+.data_source_select {
+    height: 100px;
+    background-color: green;
+    padding:  0px;
+    margin: 0px;
+
+}
+
+#select_list {
+    padding-top: 33px;
+    width: 100%;
+    text-align: center;
+    list-style-type: none;
+}
+
+#select_list li {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+
+#data_presenter_container {
+    width:960px;
+	margin:0 auto;
+	text-align:left;
+	padding:15px;
+	border:1px dashed #333;
+	background-color: black;
+}
+
+.graph {
+    background-color: #F9F9F9;
+    border: 1px solid #CCCCCC;
+    padding: 3px;
+    font: 11px/1.4em Helvetica, sans-serif;
+}
+
+.graph svg {
+    border: 1px solid #CCCCCC;
+    vertical-align:middle;
+    margin-bottom: 3px;
+}
+
+.right {
+    margin: 0.5em 0pt 0.5em 0.8em;
+    float:right;
+}
+
+.left {
+    margin: 0.5em 0.8em 0.5em 0;
+    float:left;
+}
+
+.chart {
+    background: #FEF9F0;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.chart rect {
+    stroke: white;
+}
+
+.chart text {
+    font: 11px/1.4em Helvetica, sans-serif;
+}
+
+.totals {
+    font: 11px/1.4em Helvetica, sans-serif;
+    fill: white;
+}
+
+.title {
+    font: 14px/2.0em Helvetica, sans-serif;
+    font-style: underline;
+}

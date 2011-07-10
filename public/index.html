@@ -3,13 +3,23 @@
     <title>Stats</title>
     <script src="javascripts/raphael-min.js" type="text/javascript" ></script>
     <script src="javascripts/jquery-1.5.1.js" type="text/javascript"></script>
+    <script src="javascripts/ns_stats_common.js" type="text/javascript"></script>
+    <script src="javascripts/ns_stats_graphs.js" type="text/javascript"></script>
+    <script src="javascripts/ns_stats_maps.js" type="text/javascript"></script>
+    <link href="stylesheets/style.css" media="screen" rel="stylesheet" type="text/css">
   </head>
   <body>
+  <script>
+      $(document).ready(function(){
+
+      });
+  </script>
     <div class="container">
       <div class="data_source_select">
-        <ul>
+        <ul id="select_list">
           <li>
-            <select>
+              <label>Build:</label>
+            <select id="build_number">
               <option>180</option>
               <option>181</option>
               <option>182</option>
@@ -18,7 +28,8 @@
             </select>
           </li>
           <li>
-            <select>
+              <label>Map:</label>
+            <select id="map_name">
               <option>ns2_summit</option>
               <option>ns2_rockdown</option>
               <option>ns2_junction</option>
@@ -27,11 +38,13 @@
             </select>
           </li>
           <li>
-            <button>Submit</button>
+            <button id="load_data">Load</button>
           </li>
         </ul>
       </div>  
-      <div class="data_presenter_container"></div>
+      <div id="data_presenter_container">
+          <div id="graphs"></div>
+      </div>
     </div>
   </body>
 </html>
