@@ -4,6 +4,7 @@ $:.unshift(File.expand_path('./lib', ENV['rvm_path'])) # Add RVM's lib directory
 require "rvm/capistrano"                  # Load RVM's capistrano plugin.
 set :rvm_ruby_string, '1.9.2-p136@ns-stats-sinatra'        # Or whatever env you want it to run in.
 
+default_run_options[:pty] = true 
 ssh_options[:keys] = [File.join(ENV["HOME"], "auth", "yodakey.pem")]
 ssh_options[:port] = 22
 ssh_options[:user] = "ns_stats"
