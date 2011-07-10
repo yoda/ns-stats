@@ -25,7 +25,7 @@ function new_heatmap_canvas(height, width, container_element, title, map_name) {
   var bg_elem = $(canvas_container).find('.target');
   var bg = Raphael(bg_elem.get(0), height, width);
   var image_file = image_root + map_name + ".png"
-    alert(image_file);
+  //  alert(image_file);
   var image = bg.image(image_file, 0, 0, 256, 256);
   return bg;
 }

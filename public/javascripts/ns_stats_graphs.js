@@ -45,15 +45,15 @@ function create_graph(query, data_json) {
     var results = collectObjectNamesByTeam(query[0], data_json, query[1], query[2]);
 
     results.sort(compare_kv);
-    var temp = "";
+    //var temp = "";
 
-    temp += "[";
-    $.each(results, function(i_x, da) {
-      temp += "[" + da["name"] + ", " + da["value"] + "], "
-    });
-    temp += "]";
+    //temp += "[";
+    //$.each(results, function(i_x, da) {
+    //  temp += "[" + da["name"] + ", " + da["value"] + "], "
+    //});
+    //temp += "]";
 
-    alert(temp);
+    //alert(temp);
 
 
 

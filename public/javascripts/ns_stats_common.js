@@ -38,14 +38,14 @@ var NSStats = (function (NSStats) {
                     url: url,
                     dataType: 'json',
                     data: '',
-                    success: (function(data, textStatus, jqXHR) {
-                        if(textStatus == "200") {
+                    success: function(data, textStatus, jqXHR) {
+                        if(textStatus == "success") {
                             $(document).trigger('nss.events.load_data_success');
                             do_report(data, '#graphs');
                         } else {
                             $(document).trigger('nss.events.load_data_failure');
                         }
-                    })
+                    }
                 })
 
             });
@@ -88,17 +88,21 @@ GRAPH_QUERIES = [[ALIEN_TEAM, "target", "_type", "Number of Kharaa Deaths"], [MA
 
 HEAT_MAP_QUERIES = [["attacker", 1, "Marine kills."],["attacker", 2, "Alien kills."],["attacker", 3, "Marine and Alien kills."],["target", 1, "Marine deaths."],["target", 2, "Alien deaths."],["target", 3, "Marine and Alien deaths."]];
 
-function do_report(target, data) {
+function do_report(data, target) {
     // Clear the target first.
     $(target).empty();
 
-    var map_name = data[0]["map"];
-    $.each(HEAT_MAP_QUERIES, function(query,index) {
-        create_heatmap(query, map_name, data);
-    });
 
-    $.each(GRAPH_QUERIES, function(query,index) {
-        create_graph(query, data);
-    });
+    var map_name = data[0]["map"];
+
+    var i = 0;
+
+    for(i = 0; i < HEAT_MAP_QUERIES.length; i += 1) {
+        create_heatmap(HEAT_MAP_QUERIES[i], map_name, data);
+    }
+
+    for(i = 0; i < GRAPH_QUERIES.length; i += 1) {
+        create_graph(GRAPH_QUERIES[i], data);
+    }
 
 }
