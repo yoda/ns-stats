@@ -41,7 +41,7 @@ function compare_kv(a, b) {
 }
 
 
-function plot_graph(data_json, query) {
+function create_graph(query, data_json) {
     var results = collectObjectNamesByTeam(query[0], data_json, query[1], query[2]);
 
     results.sort(compare_kv);

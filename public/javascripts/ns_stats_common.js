@@ -5,7 +5,13 @@ $(function() {
 var NSStats = (function (NSStats) {
    NSStats.Events = new function() {
        this.configEventRouter = function() {
-           $(document).bind('nss.events.load_data', function(e) {
+           $(document).bind('nss.events.load_data_request', function() {
+              // Hookup the onchange events and on click to go get data
+           });
+           $(document).bind('nss.events.load_data_failure', function() {
+              // Hookup the onchange events and on click to go get data
+           });
+           $(document).bind('nss.events.load_data_success', function() {
               // Hookup the onchange events and on click to go get data
            });
        };
@@ -27,12 +33,18 @@ var NSStats = (function (NSStats) {
                 var map_name_selector = $('#select_list').find('#map_name');
                 var build_number_selector = $('#select_list').find('#build_number');
                 var url = '/' + build_number_selector.val() + '/' + map_name_selector.val();
+                $(document).trigger('nss.events.load_data_request');
                 $.ajax({
                     url: url,
                     dataType: 'json',
                     data: '',
                     success: (function(data, textStatus, jqXHR) {
-                        alert(data);
+                        if(textStatus == "200") {
+                            $(document).trigger('nss.events.load_data_success');
+                            do_report(data, '#graphs');
+                        } else {
+                            $(document).trigger('nss.events.load_data_failure');
+                        }
                     })
                 })
 
@@ -75,3 +87,18 @@ function team_color(team) {
 GRAPH_QUERIES = [[ALIEN_TEAM, "target", "_type", "Number of Kharaa Deaths"], [MARINE_TEAM, "target", "_type", "Number of TSA Deaths"], [MARINE_TEAM, "attacker", "_type", "Kills by TSA Type"], [ALIEN_TEAM, "attacker", "_type", "Kills by Kharaa Type"], [MARINE_TEAM, "attacker", "_weapon", "TSA Kills by Weapon Type"], [ALIEN_TEAM, "attacker", "_weapon", "Kharaa Kills by Weapon Type"]];
 
 HEAT_MAP_QUERIES = [["attacker", 1, "Marine kills."],["attacker", 2, "Alien kills."],["attacker", 3, "Marine and Alien kills."],["target", 1, "Marine deaths."],["target", 2, "Alien deaths."],["target", 3, "Marine and Alien deaths."]];
+
+function do_report(target, data) {
+    // Clear the target first.
+    $(target).empty();
+
+    var map_name = data[0]["map"];
+    $.each(HEAT_MAP_QUERIES, function(query,index) {
+        create_heatmap(query, map_name, data);
+    });
+
+    $.each(GRAPH_QUERIES, function(query,index) {
+        create_graph(query, data);
+    });
+
+}
