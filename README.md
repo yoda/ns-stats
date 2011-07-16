@@ -3,12 +3,21 @@ NS2 Statistics
 Requires:
 A new web-browser that supports svg etc...
 
+Technologies Used:
+d3 javascript visualisation library - http://mbostock.github.com/d3/
+jquery - http://jquery.com/
+raphaeljs - http://raphaeljs.com/
+nginx - http://www.nginx.org/
+sinatra - http://www.sinatrarb.com/
+thin - http://code.macournoyer.com/thin/
+
 --------
 #### Concept:
 --------
 
 Use the data from:
 - http://unknownworldsstats.appspot.com/statkilldata?version=<version_number>&map=<map_name>
+- http://unknownworldsstats.appspot.com/displayendgamestats?version=<version_number>&output=json
 To create useful visualisations in respect to game play and game balancing. 
 
 This application implements:
