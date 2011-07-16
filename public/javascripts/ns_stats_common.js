@@ -140,6 +140,9 @@ function do_statkill_data_report(statkill_data, target) {
 
 }
 function do_endgame_data_report(statendgame_data, target) {
+    // Clear the target first.
+    $(target).empty();
+
     var i = 0;
 
     for(i = 0; i < STAT_ENDGAME_QUERIES.length; i += 1) {
