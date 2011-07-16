@@ -38,10 +38,10 @@ var NSStats = (function (NSStats) {
                     url: url,
                     dataType: 'json',
                     data: '',
-                    success: function(data, textStatus, jqXHR) {
+                    success: function(statkill_data, textStatus, jqXHR) {
                         if(textStatus == "success") {
                             $(document).trigger('nss.events.load_data_success');
-                            do_report(data, '#graphs');
+                            do_statkill_data_report(statkill_data, '#graphs');
                         } else {
                             $(document).trigger('nss.events.load_data_failure');
                         }
@@ -49,6 +49,30 @@ var NSStats = (function (NSStats) {
                 })
 
             });
+
+
+            var load_data_button2 = $('#select_list').find('#load_data');
+            $(load_data_button).bind('click', function() {
+                var build_number_selector = $('#select_list').find('#build_number');
+                var url = 'statendgame/' + build_number_selector.val();
+                $(document).trigger('nss.events.load_data_request');
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    data: '',
+                    success: function(statendgame_data, textStatus, jqXHR) {
+                        if(textStatus == "success") {
+                            $(document).trigger('nss.events.load_data_success');
+                            do_endgame_data_report(statendgame_data, '#graphs');
+                        } else {
+                            $(document).trigger('nss.events.load_data_failure');
+                        }
+                    }
+                })
+
+            });
+
+
         };
     };
     return NSStats
@@ -84,25 +108,41 @@ function team_color(team) {
   }
 }
 
-GRAPH_QUERIES = [[ALIEN_TEAM, "target", "_type", "Number of Kharaa Deaths"], [MARINE_TEAM, "target", "_type", "Number of TSA Deaths"], [MARINE_TEAM, "attacker", "_type", "Kills by TSA Type"], [ALIEN_TEAM, "attacker", "_type", "Kills by Kharaa Type"], [MARINE_TEAM, "attacker", "_weapon", "TSA Kills by Weapon Type"], [ALIEN_TEAM, "attacker", "_weapon", "Kharaa Kills by Weapon Type"]];
+GRAPH_QUERIES = [[ALIEN_TEAM, "target", "_type", "Number of Kharaa Deaths", "target_team"], [MARINE_TEAM, "target", "_type", "Number of TSA Deaths", "target_team"], [MARINE_TEAM, "attacker", "_type", "Kills by TSA Type", "attacker_team"], [ALIEN_TEAM, "attacker", "_type", "Kills by Kharaa Type", "attacker_team"], [MARINE_TEAM, "attacker", "_weapon", "TSA Kills by Weapon Type", "attacker_team"], [ALIEN_TEAM, "attacker", "_weapon", "Kharaa Kills by Weapon Type", "attacker_team"]];
 
-HEAT_MAP_QUERIES = [["attacker", 1, "Marine kills."],["attacker", 2, "Alien kills."],["attacker", 3, "Marine and Alien kills."],["target", 1, "Marine deaths."],["target", 2, "Alien deaths."],["target", 3, "Marine and Alien deaths."]];
+HEAT_MAP_QUERIES = [["attacker", MARINE_TEAM, "Marine kills."],["attacker", ALIEN_TEAM, "Alien kills."],["attacker", BOTH_TEAM, "Marine and Alien kills."],["target", MARINE_TEAM, "Marine deaths."],["target", ALIEN_TEAM, "Alien deaths."],["target", BOTH_TEAM, "Marine and Alien deaths."]];
 
-function do_report(data, target) {
+STAT_ENDGAME_QUERIES = [[ALIEN_TEAM, "", "map", "Alien wins by map", "winner"], [MARINE_TEAM, "", "map", "Marine wins by map", "winner"]];
+//PIE_CHART_QUERIES = [[],];
+
+function do_statkill_data_report(statkill_data, target) {
     // Clear the target first.
     $(target).empty();
 
 
-    var map_name = data[0]["map"];
+    var map_name = statkill_data[0]["map"];
 
     var i = 0;
 
+//    for(i = 0; i < PIE_CHART_QUERIES.length; i += 1) {
+//      create_piechart(PIE_CHART_QUERIES[i], map_name, statendgame_data);
+//    }
+
     for(i = 0; i < HEAT_MAP_QUERIES.length; i += 1) {
-        create_heatmap(HEAT_MAP_QUERIES[i], map_name, data);
+        create_heatmap(HEAT_MAP_QUERIES[i], map_name, statkill_data);
     }
 
     for(i = 0; i < GRAPH_QUERIES.length; i += 1) {
-        create_graph(GRAPH_QUERIES[i], data);
+        create_graph(GRAPH_QUERIES[i], statkill_data);
     }
 
+
+
+}
+function do_endgame_data_report(statendgame_data, target) {
+    var i = 0;
+
+    for(i = 0; i < STAT_ENDGAME_QUERIES.length; i += 1) {
+        create_graph(STAT_ENDGAME_QUERIES[i], statendgame_data);
+    }
 }

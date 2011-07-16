@@ -12,11 +12,11 @@ function findKeyValuePairByKey(kvps, key_name, key_value) {
 }
 
 // Make a list of unique object names
-function collectObjectNamesByTeam(team, data, field_prefix, field_suffix) {
+function collectObjectNamesByTeam(team, data, field_prefix, field_suffix, team_field) {
   var unique_object_names = [];
   var field_name = "" + field_prefix + field_suffix;
   $.each(data, function(index, val) {
-    if (val[field_prefix + "_team"] == team)
+    if (val[team_field] == team)
   {
 
     var existing_index = findKeyValuePairByKey(unique_object_names, "name", val[field_name]);
@@ -42,7 +42,7 @@ function compare_kv(a, b) {
 
 
 function create_graph(query, data_json) {
-    var results = collectObjectNamesByTeam(query[0], data_json, query[1], query[2]);
+    var results = collectObjectNamesByTeam(query[0], data_json, query[1], query[2], query[4]);
 
     results.sort(compare_kv);
     //var temp = "";
