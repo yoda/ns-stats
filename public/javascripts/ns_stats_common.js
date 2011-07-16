@@ -41,7 +41,7 @@ var NSStats = (function (NSStats) {
                     success: function(statkill_data, textStatus, jqXHR) {
                         if(textStatus == "success") {
                             $(document).trigger('nss.events.load_data_success');
-                            do_statkill_data_report(statkill_data, '#graphs');
+                            do_statkill_data_report(statkill_data, '#statkill_graphs');
                         } else {
                             $(document).trigger('nss.events.load_data_failure');
                         }
@@ -63,7 +63,7 @@ var NSStats = (function (NSStats) {
                     success: function(statendgame_data, textStatus, jqXHR) {
                         if(textStatus == "success") {
                             $(document).trigger('nss.events.load_data_success');
-                            do_endgame_data_report(statendgame_data, '#graphs');
+                            do_endgame_data_report(statendgame_data, '#statendgame_graphs');
                         } else {
                             $(document).trigger('nss.events.load_data_failure');
                         }
@@ -129,11 +129,11 @@ function do_statkill_data_report(statkill_data, target) {
 //    }
 
     for(i = 0; i < HEAT_MAP_QUERIES.length; i += 1) {
-        create_heatmap(HEAT_MAP_QUERIES[i], map_name, statkill_data);
+        create_heatmap(HEAT_MAP_QUERIES[i], map_name, statkill_data, target);
     }
 
     for(i = 0; i < GRAPH_QUERIES.length; i += 1) {
-        create_graph(GRAPH_QUERIES[i], statkill_data);
+        create_graph(GRAPH_QUERIES[i], statkill_data, target);
     }
 
 
@@ -143,6 +143,6 @@ function do_endgame_data_report(statendgame_data, target) {
     var i = 0;
 
     for(i = 0; i < STAT_ENDGAME_QUERIES.length; i += 1) {
-        create_graph(STAT_ENDGAME_QUERIES[i], statendgame_data);
+        create_graph(STAT_ENDGAME_QUERIES[i], statendgame_data, target);
     }
 }

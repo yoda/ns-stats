@@ -31,7 +31,7 @@ function new_heatmap_canvas(height, width, container_element, title, map_name) {
 }
 
 
-function create_heatmap(query, map_name, data) {
-    var a_bg = new_heatmap_canvas(256, 256, "#graphs", query[2], map_name);
+function create_heatmap(query, map_name, data, target) {
+    var a_bg = new_heatmap_canvas(256, 256, target, query[2], map_name);
     draw_heatmap(data, a_bg, query[0], query[1]);
 }

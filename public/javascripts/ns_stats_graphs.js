@@ -41,7 +41,7 @@ function compare_kv(a, b) {
 }
 
 
-function create_graph(query, data_json) {
+function create_graph(query, data_json, target) {
     var results = collectObjectNamesByTeam(query[0], data_json, query[1], query[2], query[4]);
 
     results.sort(compare_kv);
@@ -69,7 +69,7 @@ function create_graph(query, data_json) {
     var max_y = (bar_width * (data.length));
     var data_length = data.length;
 
-    var chart = d3.select("#graphs")
+    var chart = d3.select(target)
       .append("svg:svg")
       .attr("class", "chart")
       .attr("width", chart_width)
