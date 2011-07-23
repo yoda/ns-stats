@@ -45,14 +45,14 @@ function plotToMap(posX, posZ, map_metadata) {
     var xFactor = 4;
     var zFactor = xFactor / kMapRatio(map_metadata);
 
-    var plottedX = (adjustedX / (map_metadata['origin'].x / xFactor)) * (12);
-    var plottedY = (adjustedZ / (map_metadata['origin'].z / zFactor)) * (18);
+    var plottedX = (adjustedX / (map_metadata['origin'].x / xFactor)) * 16;//(map_metadata['scale'].x / (256 - map_metadata['origin'].x) * 10);
+    var plottedY = (adjustedZ / (map_metadata['origin'].z / zFactor)) * 16;//(map_metadata['scale'].x / (256 - map_metadata['origin'].z) * 10);
 
     plottedX += (256 / 2);
-    plottedY += (256 / 2);
+    plottedY -= (256 / 2);
 
     // The world space is oriented differently from the GUI space, adjust for that here.
-    return {'x': plottedX, 'y': plottedY};
+    return {'x': plottedX, 'y': -plottedY};
 }
 
 
