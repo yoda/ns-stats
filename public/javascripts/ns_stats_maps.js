@@ -69,7 +69,8 @@ function kMapRatio(map_metadata) {
 // No idea wtf is going on here really.
 // 300 in lua but i think the 300 might be based on the 1280 of the screenscaleaspect.
 // So closest I've got is making it ~60 which is 256 / ( 1280 / 300)
-SCALE_FACTOR = guiScale(256 / (screenScaleAspect() / 300));
+//SCALE_FACTOR = guiScale(256 / (screenScaleAspect() / 300));
+SCALE_FACTOR = 16;
 
 function plotToMap(posX, posZ, map_metadata) {
 
@@ -79,16 +80,15 @@ function plotToMap(posX, posZ, map_metadata) {
     var xFactor = 4;
     var zFactor = xFactor / kMapRatio(map_metadata);
 
-    alert(SCALE_FACTOR);
 
     var plottedX = (adjustedX / (map_metadata['origin'].x / xFactor)) * SCALE_FACTOR;//(map_metadata['scale'].x / (256 - map_metadata['origin'].x) * 10);
     var plottedY = (adjustedZ / (map_metadata['origin'].z / zFactor)) * SCALE_FACTOR;//(map_metadata['scale'].x / (256 - map_metadata['origin'].z) * 10);
 
     plottedX -= (256 / 2); // Shift origin
-    plottedY += (256 / 2);
+    plottedY -= (256 / 2);
 
     // The world space is oriented differently from the GUI space, adjust for that here.
-    return {'x': -plottedX, 'y': plottedY};
+    return {'y': -plottedX, 'x': -plottedY};
 }
 
 
