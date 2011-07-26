@@ -12,7 +12,22 @@ MAP_METADATA = [
   {
     'map_name': 'ns2_summit',
     'scale': new Point(414.368, 269.451, 414.368),
-    'origin': new Point(36.0886, -42.1639, 59.3301),
+    'origin': new Point(36.0886, -42.1639, 59.3301)
+  },
+  {
+    'map_name': 'ns2_rockdown', 
+    'scale': new Point(228.311, 81.6421, 277.891),
+    'origin': new Point(31.9498, -29.4132, 39.0419)
+  },
+  {
+    'map_name': 'ns2_tram',
+    'scale': new Point(281.129, 56.2683, 279.855),
+    'origin': new Point(-14.5094, -8.53439, 42.078)
+  },
+  {
+    'map_name': 'ns2_junction',
+    'scale': new Point(147.848, 43.08, 137.475),
+    'origin': new Point(16.5645, -10.0136, 27.4445)
   }
 ];
 
