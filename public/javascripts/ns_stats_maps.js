@@ -28,36 +28,6 @@ function metadata_for_map(map_name) {
   return meta_data;
 };
 
-function screenSmallAspect() {
-  // Client screen should be 256?
-  return 256;
-}
-
-function screenScaleAspect() {
-  // Server scale?
-  return 1280;
-}
-
-function percentf(p, v) {
-  return (p / 100) * v;
-}
-
-function scaledown(value, _av, _mv) {
-  var av = _av;
-  var mv = _mv
-  if (mv != 0 && av >= mv) {
-    return value;
-  }
-  if (mv == 0) {
-    mv = av;
-  }
-  return percentf( (av / mv) * 100, value);
-}
-
-function guiScale(size) {
-      return scaledown(size, screenSmallAspect(), screenScaleAspect()) * (2 - (screenSmallAspect() / screenScaleAspect()));
-}
-
 function kMapRatio(map_metadata) {
   if (map_metadata['scale'].z > map_metadata['scale'].x) {
     return map_metadata['scale'].z / map_metadata['scale'].x;
@@ -66,11 +36,8 @@ function kMapRatio(map_metadata) {
   }
 }
 
-// No idea wtf is going on here really.
-// 300 in lua but i think the 300 might be based on the 1280 of the screenscaleaspect.
-// So closest I've got is making it ~60 which is 256 / ( 1280 / 300)
-//SCALE_FACTOR = guiScale(256 / (screenScaleAspect() / 300));
-SCALE_FACTOR = 16;
+// Origin is the middle of the 256 square (scale or explode from there)
+SCALE_FACTOR = (256 / 2);
 
 function plotToMap(posX, posZ, map_metadata) {
 
@@ -78,17 +45,17 @@ function plotToMap(posX, posZ, map_metadata) {
     var adjustedZ = posZ - map_metadata['origin'].z;
     
     var xFactor = 4;
-    var zFactor = xFactor / kMapRatio(map_metadata);
+    var zFactor = xFactor / kMapRatio(map_metadata); // Aproximates to 4 or smthn
 
 
-    var plottedX = (adjustedX / (map_metadata['origin'].x / xFactor)) * SCALE_FACTOR;//(map_metadata['scale'].x / (256 - map_metadata['origin'].x) * 10);
-    var plottedY = (adjustedZ / (map_metadata['origin'].z / zFactor)) * SCALE_FACTOR;//(map_metadata['scale'].x / (256 - map_metadata['origin'].z) * 10);
+    var plottedX = (adjustedX / (map_metadata['scale'].x / xFactor)) * SCALE_FACTOR;
+    var plottedY = (adjustedZ / (map_metadata['scale'].z / zFactor)) * SCALE_FACTOR;
 
     plottedX -= (256 / 2); // Shift origin
-    plottedY -= (256 / 2);
+    plottedY += (256 / 2);
 
-    // The world space is oriented differently from the GUI space, adjust for that here.
-    return {'y': -plottedX, 'x': -plottedY};
+    // The world space is oriented differently and disobeys all logical explanation.
+    return {'y': -plottedX, 'x': plottedY};
 }
 
 
