@@ -98,7 +98,7 @@ function draw_heatmap(data, bg, prefix, team_select, map_name) {
 }
 
 function new_heatmap_canvas(height, width, container_element, title, map_name) {
-  $(container_element).append("<div class='graph left' style='width: 258px;'> <div class='target'></div><br />" + title + "</div>");
+  $(container_element).append("<div class='graph' style='width: 258px;'> <div class='target'></div><br />" + title + "</div>");
   var canvas_container = $(container_element).children(':last');
   var bg_elem = $(canvas_container).find('.target');
   var bg = Raphael(bg_elem.get(0), height, width);
