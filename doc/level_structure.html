@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Helvetica;
+      }
+
+      ul, ol {
+        list-style: none;
+        border-left: 1px solid #ccc;
+      }
+
+      ol {
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+      }
+
+      li {
+        border: 1px solid #ccc;
+      }
+      .data_type {
+        font-size: 11px;
+        color: green;
+      }
+
+      .chunk_id {
+        margin-left: 2px;
+        margin-right: 2px;
+        padding-left: 1px;
+        padding-right: 1px;
+        float:right;
+      }
+
+      #file_structure {
+        width: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <ol id="file_structure">
+      <li><span class='data_type'>Uint32</span> File Type Header (4 bytes chars 'LVL')</li>
+      <ul>
+        <li><span class='data_type'>Uint32</span> Chunk_Object<span class="chunk_id">1</span></li>
+      <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+      <li><span class='data_type'>Uint32</span> Chunk_Mesh<span class="chunk_id">2</span></li>
+        <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+      <ul>
+        <li><span class='data_type'>Uint32</span>  Chunk_Vertices<span class="chunk_id">1</span></li>
+        <li><span class='data_type'>Uint32</span>  Chunk_Edges<span class="chunk_id">2</span></li>
+          <li><span class='data_type'>Uint32</span>  Chunk_Faces<span class="chunk_id">3</span></li>
+        <ul>
+          <li><span class='data_type'>Uint32</span> numFaces</li>
+          <li><span class='data_type'>Float</span> mappingAngle</li>
+          <li><span class='data_type'>Vec2</span> mappingOffset</li>
+          <li><span class='data_type'>Vec2</span> mappingScale</li>
+          <li><span class='data_type'>Uint32</span> mappingGroup</li>
+          <li><span class='data_type'>Uint32</span> materialIndex</li>
+          <li><span class='data_type'>Uint32</span> numHoles</li>
+          <ul>
+            <li><span class='data_type'>Uint32</span> numEdges</li>
+            <li><span class='data_type'>Uint32</span> flip</li>
+            <li><span class='data_type'>Uint32</span> edgeIndex</li>
+          </uL>
+        </uL>
+        <li><span class='data_type'>Uint32</span>  Chunk_Materials<span class="chunk_id">4</span></li>
+        <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+          <li><span class='data_type'>Uint32</span>  Chunk_Triangles<span class="chunk_id">5</span></li>
+          <li><span class='data_type'>Uint32</span> numTriangles</li>
+        <ul>
+          <li><span class='data_type'>Uint32[3]</span> vertexIndex</li>
+        </ul>
+        <li><span class='data_type'>Uint32</span>  Chunk_FaceLayers<span class="chunk_id">6</span></li>
+        <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+        <li><span class='data_type'>Uint32</span>  Chunk_MappingGroups<span class="chunk_id">7</span></li>
+        <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+        <li><span class='data_type'>Uint32</span>  Chunk_GeomertryGroups<span class="chunk_id">8</span></li>
+        <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+        <li><span class='data_type'>Uint32</span>  Chunk_Layers<span class="chunk_id">3</span></li>
+      <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+      </ul>
+      <li><span class='data_type'>Uint32</span>  Chunk_Viewports<span class="chunk_id">4</span></li>
+      <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+      <li><span class='data_type'>Uint32</span>  Chunk_Groups<span class="chunk_id">5</span></li>
+      <li><span class='data_type'>Uint32</span> Chunk_Length</li>
+    </ul>
+  </ol>
+  </body>
+</html>
+

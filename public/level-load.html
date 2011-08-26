@@ -1,0 +1,156 @@
+<html>
+  <head>
+    <title>Level Load</title>
+
+    <style type="text/css"> 
+    </style>
+    <script src="javascripts/jquery-1.5.1.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <input type="file" id="level_file" accept="*.level" multiple>
+    <div id="logger"></div>
+    <script>
+
+      // File Type Header (4 Byte)
+
+      //   UInt32 chunkId
+      //   UInt32 chunkLength
+
+      //   These are the ids used in the file:
+
+      //   Chunk_Object    = 1,
+      //   Chunk_Mesh      = 2,
+      //   Chunk_Layers    = 3,
+      //   Chunk_Viewports = 4,
+      //   Chunk_Groups    = 5,
+
+      // MESH (2)
+      //     The mesh chunk has a bunch of sub chunks. These are where you're seeing the
+      //     extra data. These are the sub-chunks of the mesh chunk:
+
+      //     Chunk_Vertices       = 1,
+      //     Chunk_Edges          = 2,
+      //     Chunk_Faces          = 3,
+      //     Chunk_Materials      = 4,
+      //     Chunk_Triangles      = 5,
+      //     Chunk_FaceLayers     = 6,
+      //     Chunk_MappingGroups  = 7,
+      //     Chunk_GeometryGroups = 8
+
+      //   Here's the structure of the faces chunk:
+
+      //   UInt32 numFaces
+      //   for each face:
+
+      //   Face
+
+
+      //   Face:
+
+
+      //   float mappingAngle
+      //   Vec2 mappingOffset
+      //   Vec2 mappingScale
+      //   UInt32 mappingGroup
+
+      //   UInt32 materialIndex
+      //   UInt32 numHoles
+
+      //   EdgeLoop (outside)
+
+      //   for each hole:
+
+      //   EdgeLoop (hole)
+
+
+      //   EdgeLoop:
+
+
+      //   UInt32 numEdges
+      //   for each edge:
+
+      //   UInt32 flip
+
+      //   UInt32 edgeIndex
+
+      //   Here's the triangles sub-chunk:
+
+      //   UInt32 numTriangles
+      //   for each face:
+
+      //   UInt32 numTriangles
+      //   for each face triangle:
+
+      //   UInt32 vertexIndex[3]
+
+
+      DEBUG = true;
+
+      $(function() {
+        // Boot
+        NSStats.App.boot();
+      });
+
+      var NSStats = (function (NSStats) {
+        NSStats.App = new function() {
+
+          // Bootstrap function
+          this.boot = function() {
+            NSStats.App.configLoadData();
+          };
+
+          // config the data loader
+          this.configLoadData = function() {
+
+            // Bind to the file input field
+            document.querySelector('#level_file').onchange = function(e) {
+              var files = e.target.files; // FileList of File objects.
+              for (var i = 0, f; f = files[i]; ++i) {
+                // Debug
+                NSStats.Logger.debug('file_name:' + f.name + ' file_type: ' + f.type + ' file_size: ' +  f.size + ' file_modified: ' + f.lastModifiedDate.toLocaleDateString());
+                NSStats.Level.load(f);
+              }
+            };
+          };
+        };
+
+        NSStats.Level = new function() {
+          this.load = function(file) {
+            NSStats.Logger.debug("Attempting to load: " + file.name);
+            var reader = new FileReader(file);
+            reader.onload = function(e) {
+              alert(e.target.result.byteLength);
+              var dv = new DataView(e.target.result);
+              alert(dv.getUint32(0));
+              alert(dv.getUint32(4));
+            };
+            reader.readAsArrayBuffer(file);
+            //   UInt32 chunkId
+            //   UInt32 chunkLength
+
+            //   These are the ids used in the file:
+
+            //   Chunk_Object    = 1,
+            //   Chunk_Mesh      = 2,
+            //   Chunk_Layers    = 3,
+            //   Chunk_Viewports = 4,
+            //   Chunk_Groups    = 5,
+
+          };
+        };
+
+        // Logger
+        NSStats.Logger = new function() {
+          this.debug = function(text) {
+            if (DEBUG) {
+              $("#logger").append((new Date()).toLocaleString() + " [D] " + text);
+              $("#logger").append("<br />");
+            }
+          };
+        };
+        return NSStats
+      }(NSStats || {}));
+
+    </script>
+  </body>
+</html>

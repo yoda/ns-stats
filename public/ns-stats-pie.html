@@ -1,0 +1,240 @@
+<html>
+  <head>
+    <title>Stats</title>
+
+    <style type="text/css"> 
+      body { background: #FFF;}
+      .graph { background-color: #F9F9F9; 
+        border: 1px solid #CCCCCC; padding: 3px; 
+        font: 11px/1.4em Helvetica, sans-serif; } 
+      .graph svg { border: 1px solid #CCCCCC; 
+        vertical-align:middle; margin-bottom: 3px; } 
+      .right { margin: 0.5em 0pt 0.5em 0.8em; float:right; } 
+      .left { margin: 0.5em 0.8em 0.5em 0; float:left; } 
+      .chart { 
+        background: #FEF9F0;
+        border-radius: 8px;
+        -moz-border-radius: 8px;
+        -webkit-border-radius: 8px;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        margin-right: 5px;
+        margin-left: 5px;
+      }
+      .chart rect {
+        stroke: white;
+      }
+      .chart text {
+        font: 11px/1.4em Helvetica, sans-serif; 
+      }
+      .totals {
+        font: 11px/1.4em Helvetica, sans-serif; 
+        fill: white;
+      }
+      .title { 
+        font: 14px/2.0em Helvetica, sans-serif; 
+        font-style: underline;
+      } 
+    </style>
+  </head>
+  <body>
+    <script src="javascripts/d3.min.js"></script>
+    <script src="javascripts/jquery-1.5.1.js"></script>
+    <div id="graphs"></div>
+    <textarea id="data"></textarea>
+    <button id="load_data">Load Data</button>
+    <script>
+      // Defaults / Globals / Defs
+
+      MARINE_TEAM = 1;
+      MARINE_COLOR = "#025D8C";
+      ALIEN_TEAM = 2;
+      ALIEN_COLOR = "#028C5D";
+      BOTH_TEAM = 3;
+      DEFAULT_COLOR = "#CCCCCC";
+      function team_color(team) {
+        switch(team) {
+          case MARINE_TEAM: {
+            return MARINE_COLOR;
+          }
+          case (ALIEN_TEAM): {
+            return ALIEN_COLOR;
+          }
+          default: {
+            return DEFAULT_COLOR;
+          }
+        }
+      };
+
+      function findKeyValuePairByKey(kvps, key_name, key_value) {
+        var target_index = -1;
+        $.each(kvps, function(index, val) {
+          if (val[key_name] == key_value)
+          {
+            target_index = index;
+            return false;
+          }
+        });
+        return target_index;
+      }
+
+      // Make a list of unique object names
+      function collectObjectNamesByTeam(team, data, field_prefix, field_suffix) {
+        var unique_object_names = [];
+        var field_name = "" + field_prefix + field_suffix;
+        $.each(data, function(index, val) {
+          if (val[field_prefix + "_team"] == team)
+          {
+
+            var existing_index = findKeyValuePairByKey(unique_object_names, "name", val[field_name]);
+            if (existing_index >= 0)
+            {
+              unique_object_names[existing_index]["value"] = unique_object_names[existing_index]["value"] + 1;
+              } else {
+              unique_object_names.push({"value": 1, "name": val[field_name]});
+            }
+          }
+        });
+        return unique_object_names;
+      }
+
+      function compare_kv(a, b) {
+        if (a["value"] > b["value"]) 
+        return -1;
+        if (a["value"] < b["value"])
+        return 1;
+        // a must be equal to b
+        return 0;
+      }
+
+
+      window.onload = function() {
+        $('#load_data').bind('click', function() {
+          var data_text = $('#data').val();
+          var data_json = JSON.parse(data_text);
+
+          var queries = [[ALIEN_TEAM, "target", "_type", "Number of Kharaa Deaths"], [MARINE_TEAM, "target", "_type", "Number of TSA Deaths"], [MARINE_TEAM, "attacker", "_type", "Kills by TSA Type"], [ALIEN_TEAM, "attacker", "_type", "Kills by Kharaa Type"], [MARINE_TEAM, "attacker", "_weapon", "TSA Kills by Weapon Type"], [ALIEN_TEAM, "attacker", "_weapon", "Kharaa Kills by Weapon Type"]];
+
+          if (data_json != null) {
+            for (var query_index = 0; query_index < queries.length; query_index = query_index + 1 ) {
+
+
+              var results = collectObjectNamesByTeam(queries[query_index][0], data_json, queries[query_index][1], queries[query_index][2]);
+
+              results.sort(compare_kv);
+              var temp = "";
+
+              temp += "[";
+              $.each(results, function(i_x, da) {
+                temp += "[" + da["name"] + ", " + da["value"] + "], " 
+              });
+              temp += "]";
+
+
+
+
+
+
+              var data = results;
+
+              var title_height = 30;
+              var chart_width = 600;
+              var x_offset = 100;
+              var bar_width = 20;
+              var y_offset = title_height + bar_width;
+              var max_y = (bar_width * (data.length));
+              var data_length = data.length;
+
+              var chart = d3.select("#graphs")
+                .append("svg:svg")
+                .attr("class", "chart")
+                .attr("width", chart_width)
+                .attr("height", max_y + title_height + y_offset)
+                .append("svg:g")
+                .attr("transform", "translate(" + x_offset + ", " + y_offset + ")");
+
+              var x = d3.scale.linear()
+              .domain([d3.min(data, function(d) { return d["value"]; }), d3.max(data, function(d) {return d["value"];})])
+              .range([0, (chart_width - x_offset - bar_width)]);
+
+              var y = d3.scale.ordinal()
+                .domain(data)
+                .rangeRoundBands([0, max_y]);
+
+              chart.selectAll("rect")
+                .data(data)
+                .enter().append("svg:rect")
+                .attr("y",  function(d) { return y(d["name"]) })
+                .attr("width", function(d) {return x(d["value"]);})
+                .attr("fill", team_color(queries[query_index][0]))
+                .attr("height", y.rangeBand());
+
+              chart.selectAll("rect")
+                .data(data)
+                .enter().append("svg:text")
+                .attr("x",x)
+                .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
+                .attr("dx", -3) // padding-right
+                .attr("dy", ".35em") // vertical-align: middle
+                .attr("class", "totals")
+                .attr("text-anchor", "end") // text-align: right
+                .text(String);
+
+              chart.selectAll("rect")
+                .data(data)
+                .enter().append("svg:text")
+                .attr("x",0)
+                .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
+                .attr("dx", -3) // padding-right
+                .attr("dy", ".35em") // vertical-align: middle
+                .attr("text-anchor", "end") // text-align: right
+                .text(function(d, i) {return data[(i - data_length)]["name"];});		//.text(function(d,i) { return data[(i - (data.length / 2))]["name"]});
+
+
+
+              chart.selectAll("line")
+                .data(x.ticks(10))
+                .enter().append("svg:line")
+                .attr("x1", x)
+                .attr("x2", x)
+                .attr("y1", 0)
+                .attr("y2", max_y)
+                .attr("stroke", "#ccc");
+
+              chart.selectAll("text.rule")
+                .data(x.ticks(10))
+                .enter().append("svg:text")
+                .attr("class", "rule")
+                .attr("x", x)
+                .attr("y", 0)
+                .attr("dy", -3)
+                .attr("text-anchor", "middle")
+                .text(String);
+
+
+              chart.append("svg:line")
+                .attr("y1", 0)
+                .attr("y2", max_y)
+                .attr("stroke", "#000");
+
+              chart.append("svg:text")
+                .attr("x", (chart_width / 2) - x_offset)
+                .attr("y", -(title_height))
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .text(queries[query_index][3]);
+
+              var pie_chart = d3.layout.pie();
+
+              alert(pie_chart);
+
+                  
+            //	});
+            }
+          };
+        });
+      };
+
+    </script>
+  </body>
+</html>
