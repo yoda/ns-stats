@@ -1,1 +1,1 @@
-rvm --create use 1.9.2-p136@ns-stats-sinatra
+rvm --create use 1.9.2@ns-stats-sinatra
