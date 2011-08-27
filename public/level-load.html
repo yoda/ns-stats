@@ -139,10 +139,13 @@
           this.load = function(file) {
             NSStats.Logger.debug("Attempting to load: " + file.name);
             // File reader
-            var reader = new FileReader(file);
+            var reader = new FileReader();
+
+
+
             // Onload event handler
             reader.onload = function(e) {
-              NSStats.Logger.debug("Load complete: " + size_format(e.target.result.byteLength));
+              NSStats.Logger.info("Load complete: " + size_format(e.target.result.byteLength));
               // Dataview for the loaded data
               var dv = new DataView(e.target.result);
               parseLevel(dv, e.target.result);
@@ -200,6 +203,7 @@
           
           var parseLevel = function(dv, ab) {
             // Seems to default to big endian even though I think osx and win7 are little endian
+            // And the spec says its meant to default to the local systems endianess.
             if (DEBUG) {
               var offsets = [0,1,2,3,4,5,6,7,8,9,10];
               // Testing start of file (sanity check)
@@ -207,9 +211,46 @@
                 NSStats.Logger.debug("Offset: " + offsets[i] + " Uint32: " + dv.getUint32(offsets[i], ENDIAN));
               } 
             }
-            NSStats.Logger.debug("First Chunk Type ID: " + dv.getUint32(4, ENDIAN));
-            NSStats.Logger.debug("First Chunk Type: " + chunk_name(CHUNKS, dv.getUint32(4, ENDIAN)));
-            NSStats.Logger.debug("First Chunk Length: " + size_format(dv.getUint32(8, ENDIAN)));
+
+            processRootLevelChunks(dv,ab);
+
+          };
+
+          var processRootLevelChunks = function(dv, ab) {
+            var prev_size = 0;
+            var prev_size_offset = 0;
+            var chunk = 0;
+            var total_size = 4; // For the file type header (the 4 that is)
+
+            var runner = function() {
+              if (total_size < ab.byteLength) {
+                chunk += 1;
+                var rlc_x = processRootLevelChunk(dv, prev_size_offset, prev_size);
+                var rlc_x_id = rlc_x.id 
+                var rlc_x_size = rlc_x.size 
+                NSStats.Logger.debug("(" + chunk + ") Root Level Chunk Type ID: " + rlc_x_id);
+                NSStats.Logger.debug("(" + chunk + ") Root Level Chunk Type: " + chunk_name(CHUNKS, rlc_x_id));
+                NSStats.Logger.debug("(" + chunk + ") Root Level Chunk Size: " + size_format(rlc_x_size));
+                prev_size_offset = ((prev_size_offset + prev_size + 4) + 4)
+                prev_size = rlc_x_size;
+                total_size += (prev_size + 8); // 8 is the id and length (2x 4 byte blocks)
+                setTimeout(runner(), 1);
+              }
+            };
+            setTimeout(runner(), 1);
+            NSStats.Logger.info("Final  Offset: " + prev_size_offset);
+            NSStats.Logger.info("Number of Chunks: " + chunk);
+          };
+
+          var processRootLevelChunk = function(dv, previous_size_offset, previous_size) {
+            var rlc_x_id_offset = previous_size_offset + previous_size + 4;
+            var rlc_x_size_offset = rlc_x_id_offset + 4;
+            var rlc_x_id = dv.getUint32(rlc_x_id_offset, ENDIAN);
+            var rlc_x_size = dv.getUint32(rlc_x_size_offset, ENDIAN);
+            return {
+              id: rlc_x_id,
+              size: rlc_x_size
+            };
           };
         };
 
@@ -217,8 +258,15 @@
         NSStats.Logger = new function() {
           this.debug = function(text) {
             if (DEBUG) {
-              $("#logger").append("<li>" + "<span class='timestamp'>" + (new Date()).toLocaleString() + "</span><span class='loglevel'>" + "[D]" + "</span>" + text + "</li>");
+              setTimeout( function() {
+                $("#logger").append("<li>" + "<span class='timestamp'>" + (new Date()).toLocaleString() + "</span><span class='loglevel'>" + "[D]" + "</span>" + text + "</li>");
+              }, 20);
             }
+          };
+          this.info = function(text) {
+            setTimeout( function() {
+              $("#logger").append("<li>" + "<span class='timestamp'>" + (new Date()).toLocaleString() + "</span><span class='loglevel'>" + "[I]" + "</span>" + text + "</li>");
+            }, 20);
           };
         };
         return NSStats
